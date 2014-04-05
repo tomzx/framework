@@ -249,9 +249,10 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
 	 */
 	protected function bootIfNotBooted()
 	{
-		if ( ! isset(static::$booted[get_class($this)]))
+		$class = get_class($this);
+		if ( ! isset(static::$booted[$class]))
 		{
-			static::$booted[get_class($this)] = true;
+			static::$booted[$class] = true;
 
 			$this->fireModelEvent('booting', false);
 
@@ -2690,6 +2691,8 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
 	public static function setEventDispatcher(Dispatcher $dispatcher)
 	{
 		static::$dispatcher = $dispatcher;
+		// Reset booted model since we change dispatcher
+		static::$booted = array();
 	}
 
 	/**
