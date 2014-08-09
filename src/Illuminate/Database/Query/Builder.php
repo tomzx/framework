@@ -722,6 +722,18 @@ class Builder {
 			return $this->whereInSub($column, $values, $boolean, $not);
 		}
 
+		// If the passed value is empty, it is possible to do some query pre-optimisation.
+		// For instance, if we want whereIn where we have no items, it basically means
+		// that nothing of the current query will end up being selected. On the other hand,
+		// if we want whereNotIn with no item, it means basically to ignore that constraint.
+		if (empty($values)) {
+			if ( ! $not) {
+				return $this->whereRaw(0, [], $boolean);
+			} else {
+				return $this;
+			}
+		}
+
 		$this->wheres[] = compact('type', 'column', 'values', 'boolean');
 
 		$this->addBinding($values, 'where');
