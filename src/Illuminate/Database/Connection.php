@@ -241,6 +241,15 @@ class Connection implements ConnectionInterface {
 		return $query->from($table);
 	}
 
+	public function from(Closure $callback, $alias)
+	{
+		$processor = $this->getPostProcessor();
+
+		$query = new Query\Builder($this, $this->getQueryGrammar(), $processor);
+
+		return $query->fromSub($callback, $alias);
+	}
+
 	/**
 	 * Get a new raw query expression.
 	 *

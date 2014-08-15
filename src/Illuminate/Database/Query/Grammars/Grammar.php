@@ -109,12 +109,18 @@ class Grammar extends BaseGrammar {
 	 * Compile the "from" portion of the query.
 	 *
 	 * @param  \Illuminate\Database\Query\Builder  $query
-	 * @param  string  $table
+	 * @param  mixed  $table
 	 * @return string
 	 */
 	protected function compileFrom(Builder $query, $table)
 	{
-		return 'from '.$this->wrapTable($table);
+		if (is_array($table)) {
+			$from = '('.$this->compileSelect($table['query']).') as '.$table['alias'];
+		} else {
+			$from = $this->wrapTable($table);
+		}
+
+		return 'from '.$from;
 	}
 
 	/**

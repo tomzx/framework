@@ -262,6 +262,26 @@ class Builder {
 	}
 
 	/**
+	 * Set a full sub-query to be the from target.
+	 *
+	 * @param callable $callback
+	 * @param string   $alias
+	 * @return $this
+	 */
+	public function fromSub(Closure $callback, $alias)
+	{
+		$query = $this->newQuery();
+
+		call_user_func($callback, $query);
+
+		$this->from = compact('query', 'alias');
+
+		$this->mergeBindings($query);
+
+		return $this;
+	}
+
+	/**
 	 * Add a join clause to the query.
 	 *
 	 * @param  string  $table
